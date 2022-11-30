@@ -7,7 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/tj/assert"
@@ -35,7 +34,7 @@ func TestDecodeTx(t *testing.T) {
 			GasLimit: uint64(500000),
 			GasPrice: big.NewInt(10000000000),
 			Value:    big.NewInt(5000000000000000000),
-			Data:     common.FromHex("2e59905400000000000000000000000089ed2f18baaca8e178d8a872e69f27868f17565c2757218faa9c12a2940cc8ab856661c26ac8d47d93a1d672961a49bdafc854b5"),
+			Data:     "2e59905400000000000000000000000089ed2f18baaca8e178d8a872e69f27868f17565c2757218faa9c12a2940cc8ab856661c26ac8d47d93a1d672961a49bdafc854b5",
 			From:     "0x89ed2f18BaAca8E178d8a872e69F27868f17565c",
 			To:       "0x51c202Fb78B3AE2BEd8be41155Aa37dC730B1d82",
 			R:        r,

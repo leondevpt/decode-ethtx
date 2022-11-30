@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"encoding/json"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -15,7 +16,7 @@ type EthTx struct {
 	GasLimit uint64   `json:"gasLimit"`
 	To       string   `json:"to"`
 	Value    *big.Int `json:"value"`
-	Data     []byte   `json:"data"`
+	Data     string   `json:"data"`
 	From     string   `json:"from"`
 	ChainId  *big.Int `json:"chainId"`
 	R        *big.Int `json:"r"`
@@ -45,7 +46,7 @@ func DecodeTx(hexTx string) (*EthTx, error) {
 	m.GasLimit = msg.Gas()
 	m.To = msg.To().Hex()
 	m.Value = msg.Value()
-	m.Data = msg.Data()
+	m.Data = hexutil.Encode(msg.Data())
 	m.From = msg.From().Hex()
 	m.V, m.R, m.S = tx.RawSignatureValues()
 	return &m, nil
