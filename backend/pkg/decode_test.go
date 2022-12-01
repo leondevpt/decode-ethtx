@@ -15,10 +15,6 @@ import (
 func TestDecodeTx(t *testing.T) {
 	hexTx := "f8b4088502540be4008307a1209451c202fb78b3ae2bed8be41155aa37dc730b1d82884563918244f40000b8442e59905400000000000000000000000089ed2f18baaca8e178d8a872e69f27868f17565c2757218faa9c12a2940cc8ab856661c26ac8d47d93a1d672961a49bdafc854b5821792a0236c9aa9b59c698131e69df9619d3e7cb2af48d695b3ee3ffd3274a02f131e9da01ce2f63821d9035b8e102b9c5816109ab4c87fb941f712ba59e0c0f441cb28fc"
 
-	r, _ := new(big.Int).SetString("0x236c9aa9b59c698131e69df9619d3e7cb2af48d695b3ee3ffd3274a02f131e9d", 0)
-	s, _ := new(big.Int).SetString("0x1ce2f63821d9035b8e102b9c5816109ab4c87fb941f712ba59e0c0f441cb28fc", 0)
-	v, _ := new(big.Int).SetString("1792", 0)
-
 	type args struct {
 		hexTx string
 	}
@@ -37,9 +33,9 @@ func TestDecodeTx(t *testing.T) {
 			Data:     "2e59905400000000000000000000000089ed2f18baaca8e178d8a872e69f27868f17565c2757218faa9c12a2940cc8ab856661c26ac8d47d93a1d672961a49bdafc854b5",
 			From:     "0x89ed2f18BaAca8E178d8a872e69F27868f17565c",
 			To:       "0x51c202Fb78B3AE2BEd8be41155Aa37dC730B1d82",
-			R:        r,
-			V:        v,
-			S:        s,
+			R:        "236c9aa9b59c698131e69df9619d3e7cb2af48d695b3ee3ffd3274a02f131e9d",
+			V:        "1792",
+			S:        "1ce2f63821d9035b8e102b9c5816109ab4c87fb941f712ba59e0c0f441cb28fc",
 		}, wantErr: false},
 	}
 	for _, tt := range tests {

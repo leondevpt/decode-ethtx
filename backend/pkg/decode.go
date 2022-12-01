@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"math/big"
+	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -18,10 +19,10 @@ type EthTx struct {
 	Value    *big.Int `json:"value"`
 	Data     string   `json:"data"`
 	From     string   `json:"from"`
-	ChainId  *big.Int `json:"chainId"`
-	R        *big.Int `json:"r"`
-	V        *big.Int `json:"v"`
-	S        *big.Int `json:"s"`
+	ChainId  *big.Int `json:"chainId,omitempty"`
+	R        string   `json:"r,omitempty"`
+	V        string   `json:"v,omitempty"`
+	S        string   `json:"s,omitempty"`
 }
 
 func (e *EthTx) ToJSON() ([]byte, error) {
@@ -46,8 +47,12 @@ func DecodeTx(hexTx string) (*EthTx, error) {
 	m.GasLimit = msg.Gas()
 	m.To = msg.To().Hex()
 	m.Value = msg.Value()
-	m.Data = hexutil.Encode(msg.Data())
+	m.Data = strings.TrimPrefix(hexutil.Encode(msg.Data()), "0x")
 	m.From = msg.From().Hex()
-	m.V, m.R, m.S = tx.RawSignatureValues()
+	m.ChainId = tx.ChainId()
+	v, r, s := tx.RawSignatureValues()
+	m.V = v.Text(16)
+	m.R = r.Text(16)
+	m.S = s.Text(16)
 	return &m, nil
 }
