@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'data/model/response.dart';
 
 import 'widget/button.dart';
 
@@ -34,6 +38,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController inputController = TextEditingController();
+  final TextEditingController outputController = TextEditingController();
   String inputText = '';
 
   @override
@@ -43,9 +48,32 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
-  void _submitInput() {
+  postData(String dataStr) async {
+    String result;
+    try {
+      var response = await Dio(BaseOptions(
+        baseUrl: "http://localhost:3000",
+        contentType: 'application/json; charset=utf-8',
+        connectTimeout: 5000,
+        receiveTimeout: 5000,
+        responseType: ResponseType.json,
+      )).post("/decode", data: {'tx': dataStr});
+      if (response.statusCode == HttpStatus.ok) {
+        var data = jsonDecode(response.toString());
+        var resp = Result.fromJson(data);
+        if (resp.code != 0) {
+          result = resp.msg!;
+        } else {
+          result = resp.data != null ? getPrettyJSONString(resp.data) : '';
+        }
+      } else {
+        result = 'Error getting status ${response.statusCode}';
+      }
+    } catch (exception) {
+      result = exception.toString();
+    }
     setState(() {
-      inputText = inputController.text;
+      outputController.text = result;
     });
   }
 
@@ -88,6 +116,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 Button("Decode", onPressed: (() {
                   //TODO
                   print("decode pressed");
+                  print(inputController.text);
+                  postData(inputController.text);
                 })),
                 Button("Broadcast", onPressed: (() {
                   print("broadcast pressed");
@@ -100,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
             margin: const EdgeInsets.only(top: 1.0, right: 200.0),
             child: TextField(
               autofocus: true, // 在文本框可见时将其聚焦
-              controller: inputController,
+              controller: outputController,
               maxLines: 15,
 
               decoration: const InputDecoration(
