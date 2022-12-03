@@ -12,6 +12,10 @@ type Req struct {
 	Tx string `json:"tx" form:"tx" binding:"required"`
 }
 
+func PingHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, RespOK("pong"))
+}
+
 func DecodeHandler(c *gin.Context) {
 	var req Req
 	if err := c.ShouldBind(&req); err != nil {
