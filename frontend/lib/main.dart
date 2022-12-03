@@ -50,14 +50,22 @@ class _MyHomePageState extends State<MyHomePage> {
 
   postData(String dataStr) async {
     String result;
+
     try {
+      if (dataStr.isEmpty) {
+        result = 'tx data is empty';
+        setState(() {
+          outputController.text = result;
+        });
+        return;
+      }
       var response = await Dio(BaseOptions(
         baseUrl: "http://localhost:3000",
         contentType: 'application/json; charset=utf-8',
         connectTimeout: 5000,
         receiveTimeout: 5000,
         responseType: ResponseType.json,
-      )).post("/decode", data: {'tx': dataStr});
+      )).post("/api/v1/decode", data: {'tx': dataStr});
       if (response.statusCode == HttpStatus.ok) {
         var data = jsonDecode(response.toString());
         var resp = Result.fromJson(data);
@@ -79,6 +87,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Decode Ethereum serialized transaction"),
@@ -86,31 +96,36 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            margin: const EdgeInsets.only(top: 50.0, right: 200.0),
-            child: TextField(
-              autofocus: true, // 在文本框可见时将其聚焦
-              controller: inputController,
-              maxLines: 12,
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              margin: const EdgeInsets.only(top: 30.0, left: 5),
+              width: screenSize.width * 0.7,
+              child: TextField(
+                autofocus: true, // 在文本框可见时将其聚焦
+                controller: inputController,
+                maxLines: 15,
 
-              decoration: const InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(width: 1, color: Colors.black54),
+                decoration: const InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 1, color: Colors.black54),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 1, color: Colors.blueAccent),
+                  ),
+                  filled: false,
+                  fillColor: Color.fromARGB(255, 224, 226, 230),
+                  hintStyle: TextStyle(color: Color.fromARGB(255, 10, 11, 11)),
+                  hintText: "Enter serialized ethereum transaction",
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(width: 1, color: Colors.blueAccent),
-                ),
-                filled: false,
-                fillColor: Color.fromARGB(255, 224, 226, 230),
-                hintStyle: TextStyle(color: Color.fromARGB(255, 10, 11, 11)),
-                hintText: "Enter serialized ethereum transaction",
               ),
             ),
           ),
           Container(
-            padding: const EdgeInsets.fromLTRB(10, 5, 10, 2),
-            margin: const EdgeInsets.only(top: 1.0, left: 5, right: 200.0),
+            padding: const EdgeInsets.all(5),
+            margin: const EdgeInsets.only(
+              left: 10,
+            ),
             child: Row(
               children: [
                 Button("Decode", onPressed: (() {
@@ -125,28 +140,30 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(10),
-            margin: const EdgeInsets.only(top: 1.0, right: 200.0),
-            child: TextField(
-              autofocus: true, // 在文本框可见时将其聚焦
-              controller: outputController,
-              maxLines: 15,
-
-              decoration: const InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(width: 1, color: Colors.black54),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              margin: const EdgeInsets.only(top: 1.0, left: 5),
+              width: screenSize.width * 0.7,
+              child: TextField(
+                autofocus: true, // 在文本框可见时将其聚焦
+                controller: outputController,
+                maxLines: 15,
+                decoration: const InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 1, color: Colors.black54),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 1, color: Colors.blueAccent),
+                  ),
+                  filled: false,
+                  fillColor: Color.fromARGB(255, 224, 226, 230),
+                  hintStyle: TextStyle(color: Color.fromARGB(255, 10, 11, 11)),
+                  //hintText: "Enter serialized ethereum transaction",
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(width: 1, color: Colors.blueAccent),
-                ),
-                filled: false,
-                fillColor: Color.fromARGB(255, 224, 226, 230),
-                hintStyle: TextStyle(color: Color.fromARGB(255, 10, 11, 11)),
-                //hintText: "Enter serialized ethereum transaction",
               ),
             ),
-          ),
+          )
         ],
       ),
     );
